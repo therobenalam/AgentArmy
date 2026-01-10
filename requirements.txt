@@ -1,0 +1,17 @@
+# AgentArmy Requirements
+
+# AWS SDK
+boto3>=1.34.0
+botocore>=1.34.0
+
+# CLI
+click>=8.1.0
+
+# MCP Server
+mcp>=1.0.0
+
+# Configuration
+pyyaml>=6.0
+
+# Async support
+aiofiles>=23.0.0
