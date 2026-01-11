@@ -1,0 +1,262 @@
+# AgentArmy OBOC Configuration
+# One Brain, One Context - Multi-Agent Orchestration
+
+# ============================================================
+# AWS Settings
+# ============================================================
+aws_region: us-east-1
+
+# ============================================================
+# OBOC Architecture Settings
+# ============================================================
+oboc:
+  enabled: true
+  
+  # Default orchestration pattern
+  # Options: sequential, concurrent, group_chat, dynamic_routing, manager
+  default_pattern: manager
+  
+  # Orchestration limits
+  max_iterations: 10
+  enable_parallel: true
+  max_parallel_agents: 3
+  timeout_seconds: 300
+
+# ============================================================
+# Three-Tier Hierarchy
+# ============================================================
+tiers:
+  # Strategic Tier - High-level planning and coordination
+  strategic:
+    coordinator:
+      model_id: us.anthropic.claude-3-5-sonnet-20241022-v2:0
+      max_tokens: 8192
+      temperature: 0.7
+      enabled: true
+  
+  # Tactical Tier - Domain specialists
+  tactical:
+    research:
+      model_id: us.anthropic.claude-3-5-sonnet-20241022-v2:0
+      max_tokens: 4096
+      temperature: 0.7
+      enabled: true
+      
+    implementation:
+      model_id: us.anthropic.claude-3-5-sonnet-20241022-v2:0
+      max_tokens: 8192
+      temperature: 0.5
+      enabled: true
+      
+    testing:
+      model_id: us.anthropic.claude-3-5-sonnet-20241022-v2:0
+      max_tokens: 4096
+      temperature: 0.6
+      enabled: true
+      
+    analysis:
+      model_id: us.anthropic.claude-3-5-sonnet-20241022-v2:0
+      max_tokens: 4096
+      temperature: 0.7
+      enabled: true
+      
+    memory:
+      model_id: us.anthropic.claude-3-5-haiku-20241022-v1:0
+      max_tokens: 2048
+      temperature: 0.3
+      enabled: true
+  
+  # Operational Tier - Tool executors
+  operational:
+    file_executor:
+      model_id: us.anthropic.claude-3-5-haiku-20241022-v1:0
+      max_tokens: 2048
+      temperature: 0.2
+      enabled: true
+      
+    api_executor:
+      model_id: us.anthropic.claude-3-5-haiku-20241022-v1:0
+      max_tokens: 2048
+      temperature: 0.2
+      enabled: true
+      
+    database_executor:
+      model_id: us.anthropic.claude-3-5-haiku-20241022-v1:0
+      max_tokens: 2048
+      temperature: 0.2
+      enabled: true
+      
+    compute_executor:
+      model_id: us.anthropic.claude-3-5-haiku-20241022-v1:0
+      max_tokens: 2048
+      temperature: 0.2
+      enabled: true
+      
+    search_executor:
+      model_id: us.anthropic.claude-3-5-haiku-20241022-v1:0
+      max_tokens: 2048
+      temperature: 0.3
+      enabled: true
+
+# ============================================================
+# Memory Hierarchy
+# ============================================================
+memory:
+  enabled: true
+  storage_path: ~/.agent_army/memory
+  
+  # Short-term memory (current session)
+  short_term:
+    max_messages: 50
+    max_tokens: 8000
+  
+  # Working memory (task duration)
+  working:
+    enable_notes: true
+    enable_artifacts: true
+  
+  # Long-term memory (persistent)
+  long_term:
+    enabled: true
+    auto_consolidate: true
+    consolidation_threshold: 100  # entries before consolidation
+
+# ============================================================
+# Knowledge Graph
+# ============================================================
+knowledge_graph:
+  enabled: true
+  storage_path: ~/.agent_army/knowledge
+  
+  # Auto-record decisions for explainability
+  record_decisions: true
+  
+  # Extract learnings from completed tasks
+  extract_learnings: true
+  
+  # Entity types to track
+  entity_types:
+    - task
+    - decision
+    - learning
+    - file
+    - function
+    - class
+
+# ============================================================
+# Resilience
+# ============================================================
+resilience:
+  # Circuit Breaker
+  circuit_breaker:
+    enabled: true
+    failure_threshold: 5
+    success_threshold: 2
+    timeout_seconds: 30.0
+    half_open_max_calls: 3
+  
+  # Retry Policy
+  retry:
+    enabled: true
+    max_attempts: 3
+    initial_backoff: 0.1
+    max_backoff: 10.0
+    backoff_multiplier: 2.0
+    jitter_factor: 0.2
+  
+  # Graceful Degradation
+  degradation:
+    enabled: true
+    levels:
+      - full
+      - partial
+      - core
+      - minimal
+
+# ============================================================
+# Observability
+# ============================================================
+observability:
+  enabled: true
+  storage_path: ~/.agent_army/traces
+  
+  # Tracing
+  tracing:
+    enabled: true
+    trace_all_operations: false
+    export_format: json
+  
+  # Metrics
+  metrics:
+    enabled: true
+    collect_latency: true
+    collect_tokens: true
+    collect_costs: true
+  
+  # Evaluation
+  evaluation:
+    enabled: false  # Enable for LLM-as-judge
+    dimensions:
+      - coherence
+      - relevance
+      - accuracy
+      - task_completion
+
+# ============================================================
+# Logging
+# ============================================================
+logging:
+  level: INFO
+  format: "[%(asctime)s] [%(name)s] %(levelname)s: %(message)s"
+  to_file: false
+  file_path: ~/.agent_army/logs/agent_army.log
+
+# ============================================================
+# Cost Tracking
+# ============================================================
+costs:
+  track_costs: true
+  # cost_limit: 1.0  # Uncomment to set max cost per execution
+  
+  # Cost per 1K tokens (Claude Sonnet)
+  pricing:
+    sonnet:
+      input: 0.003
+      output: 0.015
+    haiku:
+      input: 0.00025
+      output: 0.00125
+
+# ============================================================
+# Legacy Agent Configurations (for backward compatibility)
+# ============================================================
+agents:
+  planner:
+    model_id: us.anthropic.claude-3-5-sonnet-20241022-v2:0
+    max_tokens: 4096
+    temperature: 0.7
+    enabled: true
+    
+  research:
+    model_id: us.anthropic.claude-3-5-sonnet-20241022-v2:0
+    max_tokens: 4096
+    temperature: 0.7
+    enabled: true
+    
+  implementation:
+    model_id: us.anthropic.claude-3-5-sonnet-20241022-v2:0
+    max_tokens: 8192
+    temperature: 0.5
+    enabled: true
+    
+  testing:
+    model_id: us.anthropic.claude-3-5-sonnet-20241022-v2:0
+    max_tokens: 4096
+    temperature: 0.6
+    enabled: true
+    
+  analysis:
+    model_id: us.anthropic.claude-3-5-sonnet-20241022-v2:0
+    max_tokens: 4096
+    temperature: 0.7
+    enabled: true
